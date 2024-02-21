@@ -1,0 +1,15 @@
+SELECT
+    DeviceName,
+    WorkorderId,
+    AVG(CAST(GoodCount AS float) / CAST((GoodCount + BadCount) AS float)) * 100 AS KPI,
+    System.Timestamp() AS windEndTime
+INTO
+    [produkt-kpi]
+FROM
+    [iot-mvm111]
+TIMESTAMP BY
+    EventEnqueuedUtcTime
+GROUP BY
+    WorkorderId,
+    DeviceName,
+    TumblingWindow(minute, 5);
