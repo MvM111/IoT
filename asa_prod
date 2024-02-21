@@ -13,3 +13,21 @@ GROUP BY
     WorkorderId,
     DeviceName,
     TumblingWindow(minute, 5);
+
+SELECT
+    DeviceName,
+    WorkorderId,
+    System.Timestamp() AS windowEndTime,
+    AVG(Temperature) AS AvgTemperature,
+    MIN(Temperature) AS MinTemperature,
+    MAX(Temperature) AS MaxTemperature
+INTO
+    [temperature-info]
+FROM
+    [iot-mvm111]
+TIMESTAMP BY
+    EventEnqueuedUtcTime
+GROUP BY
+    WorkorderId,
+    DeviceName, 
+    HoppingWindow(minute, 5, 1);
