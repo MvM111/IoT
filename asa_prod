@@ -31,3 +31,23 @@ GROUP BY
     WorkorderId,
     DeviceName, 
     HoppingWindow(minute, 5, 1);
+
+SELECT
+    DeviceName,
+    WorkorderId,
+    COUNT(*) AS ErrorCount,
+    System.Timestamp() AS windowEndTime
+INTO
+    [device-error]
+FROM
+    [iot-mvm111]
+TIMESTAMP BY
+    EventEnqueuedUtcTime
+WHERE
+    IsDevErr = 'true'
+GROUP BY
+    WorkorderId,
+    DeviceName,
+    SlidingWindow(minute, 1)
+HAVING
+    COUNT(*) > 3;
